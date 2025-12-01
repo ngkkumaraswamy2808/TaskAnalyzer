@@ -6,77 +6,79 @@
     <link rel="stylesheet" href="/static/styles.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
+
 <body>
-<div class="container">
-    <header>
-        <h1>Smart Task Analyzer</h1>
-        <p>Paste tasks or use the form, choose a strategy, and let the app prioritize your work.</p>
-    </header>
 
-    <main class="layout">
-        <!-- LEFT SIDE: INPUT -->
-        <section class="panel">
-            <h2>Add Task (Form)</h2>
-            <form id="taskForm">
-                <label>
-                    Title
-                    <input type="text" id="title" required>
-                </label>
+<header class="app-header animate-fade-slide">
+    <div class="header-content">
+        <h1>⚡ Smart Task Analyzer</h1>
+        <p>Organize, prioritize, and analyze your tasks intelligently.</p>
+    </div>
+</header>
 
-                <label>
-                    Due Date (YYYY-MM-DD)
-                    <input type="date" id="due_date">
-                </label>
+<div class="main-wrapper">
 
-                <label>
-                    Estimated Hours
-                    <input type="number" id="estimated_hours" min="1" value="1">
-                </label>
+    <!-- LEFT: FORM ONLY -->
+    <aside class="sidebar glass-card animate-pop">
+        <h2 class="section-title">Add Task</h2>
 
-                <label>
-                    Importance (1-10)
-                    <input type="number" id="importance" min="1" max="10" value="5">
-                </label>
+        <form id="taskForm" class="form">
+            <label>Title
+                <input type="text" id="title" required>
+            </label>
 
-                <label>
-                    Dependencies (IDs, comma separated)
-                    <input type="text" id="dependencies" placeholder="e.g. 1,2,3">
-                </label>
+            <label>Due Date
+                <input type="date" id="due_date">
+            </label>
 
-                <button type="submit">Add Task</button>
-            </form>
+            <label>Estimated Hours
+                <input type="number" id="estimated_hours" min="1" value="1">
+            </label>
 
-            <h2>Current Task List</h2>
-            <pre id="taskListPreview" class="preview"></pre>
+            <label>Importance (1–10)
+                <input type="number" id="importance" min="1" max="10" value="5">
+            </label>
 
-            <h2>Bulk JSON Input</h2>
-            <textarea id="taskInput" rows="6" placeholder='[{"title": "...", "due_date": "2025-11-30", ...}]'></textarea>
-            <button id="loadJsonBtn">Load JSON into Task List</button>
-        </section>
+            <label>Dependencies
+                <input type="text" id="dependencies" placeholder="e.g. 1,2,3">
+            </label>
 
-        <!-- RIGHT SIDE: RESULTS -->
-        <section class="panel">
-            <h2>Analyze Tasks</h2>
-            <div class="controls">
-                <label>
-                    Sorting Strategy:
-                    <select id="strategySelect">
-                        <option value="smart_balance">Smart Balance</option>
-                        <option value="fastest_wins">Fastest Wins</option>
-                        <option value="high_impact">High Impact</option>
-                        <option value="deadline_driven">Deadline Driven</option>
-                    </select>
-                </label>
-                <button id="analyzeBtn">Analyze</button>
-                <button id="suggestBtn">Suggest Top 3</button>
-            </div>
+            <button type="submit" class="btn-primary btn-animate">Add Task</button>
+        </form>
+    </aside>
 
-            <div id="status"></div>
-            <div id="results" class="results"></div>
-        </section>
+    <!-- RIGHT: ANALYSIS -->
+    <main class="content glass-card animate-pop">
+        <h2 class="section-title">Analyze Tasks</h2>
+
+        <div class="analysis-controls animate-fade">
+            <label>
+                Strategy:
+                <select id="strategySelect">
+                    <option value="smart_balance">Smart Balance</option>
+                    <option value="fastest_wins">Fastest Wins</option>
+                    <option value="high_impact">High Impact</option>
+                    <option value="deadline_driven">Deadline Driven</option>
+                </select>
+            </label>
+
+            <button id="analyzeBtn" class="btn-primary btn-animate">Analyze</button>
+            <button id="suggestBtn" class="btn-accent btn-animate">Suggest Top 3</button>
+        </div>
+
+        <div id="status" class="status"></div>
+        <div id="results" class="results animate-fade"></div>
     </main>
+
 </div>
 
+<!-- 🔽 Auto-block past dates -->
+<script>
+    const today = new Date().toISOString().split("T")[0];
+    document.getElementById("due_date").setAttribute("min", today);
+</script>
+
 <script src="/static/script.js"></script>
+
 </body>
 </html>

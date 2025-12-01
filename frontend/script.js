@@ -1,8 +1,7 @@
 let tasks = [];
 
 function refreshTaskPreview() {
-    const preview = document.getElementById('taskListPreview');
-    preview.textContent = JSON.stringify(tasks, null, 2);
+    // Removed preview box -> now does nothing
 }
 
 document.getElementById('taskForm').addEventListener('submit', (e) => {
@@ -12,6 +11,14 @@ document.getElementById('taskForm').addEventListener('submit', (e) => {
     const due_date = document.getElementById('due_date').value || null;
     const estimated_hours = parseInt(document.getElementById('estimated_hours').value, 10) || 1;
     const importance = parseInt(document.getElementById('importance').value, 10) || 5;
+
+    // ✅ NEW VALIDATION: Block past dates
+    const today = new Date().toISOString().split("T")[0];
+    if (due_date && due_date < today) {
+        alert("Due date cannot be earlier than today.");
+        return; // Stop task submission
+    }
+
     const depsRaw = document.getElementById('dependencies').value.trim();
 
     let dependencies = [];
@@ -33,32 +40,10 @@ document.getElementById('taskForm').addEventListener('submit', (e) => {
     };
 
     tasks.push(task);
-    refreshTaskPreview();
 
-    // Clear only the fields that make sense
+    // Clear inputs
     document.getElementById('title').value = '';
     document.getElementById('dependencies').value = '';
-});
-
-document.getElementById('loadJsonBtn').addEventListener('click', () => {
-    const text = document.getElementById('taskInput').value.trim();
-    if (!text) return;
-
-    try {
-        const parsed = JSON.parse(text);
-        if (Array.isArray(parsed)) {
-            tasks = parsed;
-        } else if (parsed.tasks && Array.isArray(parsed.tasks)) {
-            tasks = parsed.tasks;
-        } else {
-            alert("JSON must be an array or an object with a 'tasks' array.");
-            return;
-        }
-        refreshTaskPreview();
-    } catch (e) {
-        console.error(e);
-        alert("Invalid JSON. Please check your input.");
-    }
 });
 
 function setStatus(message, isError = false) {
@@ -141,9 +126,7 @@ async function callApi(endpoint) {
     try {
         const response = await fetch(`/api/tasks/${endpoint}/?strategy=${strategy}`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ tasks }),
         });
 
@@ -162,10 +145,5 @@ async function callApi(endpoint) {
     }
 }
 
-document.getElementById('analyzeBtn').addEventListener('click', () => {
-    callApi('analyze');
-});
-
-document.getElementById('suggestBtn').addEventListener('click', () => {
-    callApi('suggest');
-});
+document.getElementById('analyzeBtn').addEventListener('click', () => callApi('analyze'));
+document.getElementById('suggestBtn').addEventListener('click', () => callApi('suggest'));
